@@ -1,0 +1,85 @@
+#include <iostream>
+#include <stack>
+#include <string>
+using namespace std;
+
+// Node structure for the expression tree
+struct TreeNode {
+    string data;
+    TreeNode* left;
+    TreeNode* right;
+    TreeNode(string val) : data(val), left(nullptr), right(nullptr) {}
+};
+
+// Function to check if a character is an operator
+bool isOperator(char c) {
+    return (c == '+' || c == '-' || c == '*' || c == '/');
+}
+
+// Function to construct an expression tree from a postfix expression
+TreeNode* constructExpressionTreeFromPostfix(string postfix) {
+    stack<TreeNode*> st;
+    for (char c : postfix) {
+        if (!isOperator(c)) {
+            string op(1, c);
+            st.push(new TreeNode(op));
+        } else {
+            TreeNode* right = st.top();
+            st.pop();
+            TreeNode* left = st.top();
+            st.pop();
+            TreeNode* newNode = new TreeNode(string(1, c));
+            newNode->left = left;
+            newNode->right = right;
+            st.push(newNode);
+        }
+    }
+    return st.top();
+}
+
+// Recursive In-Order traversal
+void recursiveInOrderTraversal(TreeNode* root) {
+    if (root) {
+        recursiveInOrderTraversal(root->left);
+        cout << root->data << " ";
+        recursiveInOrderTraversal(root->right);
+    }
+}
+
+// Recursive Pre-Order traversal
+void recursivePreOrderTraversal(TreeNode* root) {
+    if (root) {
+        cout << root->data << " ";
+        recursivePreOrderTraversal(root->left);
+        recursivePreOrderTraversal(root->right);
+    }
+}
+
+// Recursive Post-Order traversal
+void recursivePostOrderTraversal(TreeNode* root) {
+    if (root) {
+        recursivePostOrderTraversal(root->left);
+        recursivePostOrderTraversal(root->right);
+        cout << root->data << " ";
+    }
+}
+
+int main() {
+    string postfixExpression = "ab+ef*g*-";
+    
+    TreeNode* root = constructExpressionTreeFromPostfix(postfixExpression);
+    
+    cout << "In-Order Traversal (Recursive): ";
+    recursiveInOrderTraversal(root);
+    cout << endl;
+
+    cout << "Pre-Order Traversal (Recursive): ";
+    recursivePreOrderTraversal(root);
+    cout << endl;
+
+    cout << "Post-Order Traversal (Recursive): ";
+    recursivePostOrderTraversal(root);
+    cout << endl;
+
+    return 0;
+}
